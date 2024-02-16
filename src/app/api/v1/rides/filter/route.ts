@@ -30,6 +30,6 @@ export async function GET(req: Request, res: Response) {
 			return Response.json({ error: error.message }, { status: 500 });
 		}
 
-		return Response.json({ error: "An unknown error occurred" }, { status: 500 });
+		return Response.json({ error: "An unknown error occurred!" }, { status: 500 });
 	}
 }
