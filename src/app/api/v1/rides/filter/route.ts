@@ -1,4 +1,4 @@
-import { findRides, findRidesSchema } from "@/actions/db";
+import { findRidesOnDate, findRidesSchema } from "@/actions/db";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
@@ -18,7 +18,7 @@ export async function GET(req: Request, res: Response) {
 
 		const body = findRidesSchema.parse(payload);
 
-		const rides = await findRides(supabase, body);
+		const rides = await findRidesOnDate(supabase, body);
 
 		return Response.json(rides);
 	} catch (error) {
