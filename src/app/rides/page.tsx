@@ -1,4 +1,4 @@
-import { Ride, findRides } from "@/actions/db";
+import { Ride, findRidesAroundDate } from "@/actions/db";
 import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { toFirstUpperCase } from "@/utils/general";
 import { createClient } from "@/utils/supabase/server";
@@ -23,21 +23,21 @@ export default async function FilteredRidesPage({
 	const cookieStore = cookies();
 	const supabase = createClient(cookieStore);
 
-	const rides = await findRides(supabase, {
+	const rides = await findRidesAroundDate(supabase, {
 		from: Number(from),
 		to: Number(to),
 		date,
 		passengers: Number(passengers),
 	});
 
-	return <div className="flex flex-col gap-3 pt-32 max-w-lg mx-auto">
+	return <div className="flex flex-col gap-3 max-w-lg px-3 mx-auto">
 		<h1>Found Rides:</h1>
 		{rides.map(ride => <RiderRideCard key={ride.id} {...ride} />)}
 	</div>
 }
 
 function RiderRideCard({
-	from, to, start_timestamp, total_price, capacity
+	from, to, start_timestamp, price, capacity
 }: Ride) {
 	return <Card>
 		<CardHeader className="flex flex-row gap-2 items-center">
@@ -62,10 +62,10 @@ function RiderRideCard({
 				</div>
 			</div>
 
-			<div className="grid grid-cols-[auto_2rem] gap-x-2 w-fit px-3 py-2 bg-yellow-300 rounded-md">
+			<div className="grid grid-cols-[auto_2rem] gap-x-2 w-fit px-3 py-2 bg-yellow-300 rounded-lg">
 				<div className="flex flex-col text-center">
 					<p className="text-black">Price</p>
-					<p className="text-lg font-semibold">{(total_price / capacity).toFixed(0)} MKD</p>
+					<p className="text-lg font-semibold">{(price / capacity).toFixed(0)} MKD</p>
 				</div>
 				<div className="flex-n-center">
 					<Coins className="tw-8" />

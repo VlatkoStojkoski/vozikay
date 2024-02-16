@@ -17,7 +17,7 @@ export interface Ride {
 		name: string;
 	};
 	start_timestamp: string;
-	total_price: number;
+	price: number;
 	capacity: number;
 }
 
@@ -52,7 +52,7 @@ export const findRidesSchema = z.object({
 
 export type FindRidesParams = z.infer<typeof findRidesSchema>;
 
-export async function findRides(supabase: SupabaseClient<Database>, { from, to, date }: FindRidesParams) {
+export async function findRidesOnDate(supabase: SupabaseClient<Database>, { from, to, date }: FindRidesParams) {
 	const gtDate = new Date(date);
 	gtDate.setHours(0, 0, 0, 0);
 	const ltDate = new Date(date);
@@ -77,4 +77,47 @@ export async function findRides(supabase: SupabaseClient<Database>, { from, to, 
 	}
 
 	return rides;
+}
+
+export async function findRidesAroundDate(supabase: SupabaseClient<Database>, { from, to, date }: FindRidesParams) {
+	const gtDate = new Date(date);
+	gtDate.setHours(0, 0, 0, 0);
+	gtDate.setDate(gtDate.getDate() - 3);
+
+	const ltDate = new Date(date);
+	ltDate.setHours(23, 59, 59, 999);
+	ltDate.setDate(ltDate.getDate() + 3);
+
+	const { data: rides } = await supabase
+		.from('rides')
+		.select(`
+			*,
+			from!inner(*),
+			to!inner(*)
+		`)
+		.eq('from.id', from)
+		.eq('to.id', to)
+		.gte('start_timestamp', gtDate.toISOString())
+		.lte('start_timestamp', ltDate.toISOString())
+		// .order('start_timestamp')
+		// .order('' `ABS(EXTRACT(EPOCH FROM start_timestamp - '${dateIso}+00'::timestamp))`)
+		.limit(10)
+		.returns<Ride[]>();
+
+	if (rides === null) {
+		return [];
+	}
+
+	const sortedRides = rides.sort((a, b) => {
+		const dateA = new Date(a.start_timestamp).getTime();
+		const dateB = new Date(b.start_timestamp).getTime();
+		const dateCmp = new Date(date).getTime();
+
+		const epochA = Math.abs((dateA - dateCmp) / 1000);
+		const epochB = Math.abs((dateB - dateCmp) / 1000);
+
+		return epochA - epochB;
+	});
+
+	return sortedRides;
 }

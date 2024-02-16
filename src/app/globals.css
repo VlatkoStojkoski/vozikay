@@ -5,6 +5,7 @@
 
 @layer base {
   :root {
+    --navbar-height: 6rem;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -69,15 +70,15 @@
   h1,
   h2,
   h3 {
-    @apply font-heading
+    @apply font-heading;
   }
 
   h1 {
-    @apply text-4xl lg:text-5xl;
+    @apply text-4xl;
   }
 
   h2 {
-    @apply text-3xl lg:text-4xl;
+    @apply text-3xl;
   }
 }
 
@@ -87,9 +88,10 @@
     align-items: center;
     justify-content: center;
   }
+}
 
-  .fill-screen {
-    min-width: 100vw;
-    min-height: 100dvh;
+@layer components {
+  .vstack {
+    @apply flex flex-col;
   }
 }

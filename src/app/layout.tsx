@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`fill-screen ${jockeyOne.variable} ${poppins.variable} font-body`}>
+      <body className={`min-w-full min-h-[100dvh] ${jockeyOne.variable} ${poppins.variable} font-body`}>
         <Navbar />
         {children}
       </body>

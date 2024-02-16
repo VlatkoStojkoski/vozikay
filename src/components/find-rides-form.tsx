@@ -4,16 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { ButtonNumberInput, CityInput, Input, NumberInput } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { CityInput, DateInput, NumberInput } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { newRideFormSchema } from "@/utils/supabase/schemas";
 import { createClient } from "@/utils/supabase/client";
 import { Database } from "@/utils/supabase/db";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Flag, Locate, Ticket, Users } from "lucide-react";
-import { Ride, findRides } from "@/actions/db";
-import { usePathname, useRouter } from "next/navigation";
+import { CalendarIcon, Flag, Locate, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { env } from "@/env";
 
 const findRidesSchema = z.object({
@@ -73,59 +71,22 @@ export default function FindRidesForm() {
 	}
 
 	return <Form {...form}>
-		<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 bg-white p-4 rounded-lg shadow-md mt-24 w-full">
-			<FormField
-				control={form.control}
-				name="from"
-				render={({ field }) => (
-					<FormItem>
-						<FormControl>
-							<div className="flex items-center gap-x-2 w-full">
-								<Locate className="text-gray-500 w-8" />
-								<CityInput
-									placeholder="Leaving from..."
-									className="flex-1"
-									cities={cities}
-									{...field}
-								/>
-							</div>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-
-			<FormField
-				control={form.control}
-				name="to"
-				render={({ field }) => (
-					<FormItem>
-						<FormControl>
-							<div className="flex items-center gap-x-2 w-full">
-								<Flag className="text-gray-500 w-8" />
-								<CityInput
-									placeholder="Going to..."
-									className="flex-1"
-									cities={cities}
-									{...field}
-								/>
-							</div>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-
-			<div className="flex flex-row gap-2 w-full">
+		<form onSubmit={form.handleSubmit(onSubmit)} className="shadow-md">
+			<div className="flex flex-col gap-3 px-4 sm:px-6">
 				<FormField
 					control={form.control}
-					name="date"
+					name="from"
 					render={({ field }) => (
-						<FormItem className="flex-1">
+						<FormItem className="">
 							<FormControl>
-								<div className="flex items-center gap-x-2">
-									<Calendar className="text-gray-500 min-w-8" />
-									<Input type="date" {...field} />
+								<div className="flex items-center  gap-x-2">
+									<Locate className="text-gray-500 min-w-8" />
+									<CityInput
+										placeholder="Leaving from..."
+										className="flex-1"
+										cities={cities}
+										{...field}
+									/>
 								</div>
 							</FormControl>
 							<FormMessage />
@@ -135,22 +96,61 @@ export default function FindRidesForm() {
 
 				<FormField
 					control={form.control}
-					name="passengers"
+					name="to"
 					render={({ field }) => (
-						<FormItem>
+						<FormItem className="">
 							<FormControl>
-								<div className="flex items-center gap-x-2">
-									<Users className="text-gray-500 min-w-8" />
-									<NumberInput className="max-w-20" {...field} />
+								<div className="flex items-center  gap-x-2">
+									<Flag className="text-gray-500 min-w-8" />
+									<CityInput
+										placeholder="Going to..."
+										className="flex-1"
+										cities={cities}
+										{...field}
+									/>
 								</div>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
+
+				<div className="flex flex-row  gap-2">
+					<FormField
+						control={form.control}
+						name="date"
+						render={({ field }) => (
+							<FormItem className="">
+								<FormControl>
+									<div className="flex items-center gap-x-2">
+										<CalendarIcon className="text-gray-500 min-w-8" />
+										<DateInput className="border-b" {...field} />
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name="passengers"
+						render={({ field }) => (
+							<FormItem className="">
+								<FormControl>
+									<div className="flex items-center  gap-x-2">
+										<Users className="text-gray-500 min-w-8" />
+										<NumberInput className="max-w-20 border-0 border-b" {...field} />
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 			</div>
 
-			<Button className="w-full mt-4 bg-red-500 text-white">Find Rides</Button>
+			<Button className="w-full mt-8 rounded-t-none">Find Rides</Button>
 		</form>
 	</Form>;
 }

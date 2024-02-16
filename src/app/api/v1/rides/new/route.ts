@@ -11,7 +11,7 @@ export async function POST(req: Request, res: Response) {
 		to: formData.get('to'),
 		start_timestamp: formData.get('start_timestamp'),
 		capacity: formData.get('capacity'),
-		total_price: formData.get('total_price'),
+		price: formData.get('price'),
 	}
 
 	const body = newRideFormSchema.parse(payload);
@@ -31,14 +31,14 @@ export async function POST(req: Request, res: Response) {
 		to: body.to,
 		start_timestamp: body.start_timestamp,
 		capacity: body.capacity,
-		total_price: body.total_price,
+		price: body.price,
 		created_at: now,
 		driver: user.user?.id
 	});
 
 	console.log({ data, error });
 
-	const redirectUrl = new URL('/rides', env.NEXT_PUBLIC_BASE_URL)
+	const redirectUrl = new URL('/', env.NEXT_PUBLIC_BASE_URL)
 
 	return Response.redirect(redirectUrl)
 }

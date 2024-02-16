@@ -3,21 +3,10 @@ import * as React from "react"
 import { cn } from "@/utils/style"
 import { Button } from "./button"
 import { Minus, Plus } from "lucide-react"
-import { Check, ChevronsUpDown } from "lucide-react";
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { equalsIgnoreCase, toFirstUpperCase } from "@/utils/general";
+import { equalsIgnoreCase } from "@/utils/general";
+import { AutoComplete } from "../autocomplete";
+import DatePicker from "../date-picker";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> { }
@@ -28,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground",
+          "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground",
           className
         )}
         ref={ref}
@@ -45,14 +34,20 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps & {
   ({ className, ...props }, ref) => {
     return (
       <input
-        type="number"
+        type="text"
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground",
+          "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground",
           className
         )}
         ref={ref}
         {...props}
-        onChange={(e) => props.onChange && props.onChange(Number(e.target.value))}
+        onChange={(e) => {
+          if (!props.onChange) return;
+          if (e.target.value === "") return props.onChange(0);
+          const value = Number(e.target.value.replace(/\D/g, ""));
+          props.onChange(Math.max(0, value));
+        }}
+        value={props.value === 0 ? "" : props.value}
       />
     )
   }
@@ -82,16 +77,6 @@ const ButtonNumberInput = React.forwardRef<HTMLInputElement, InputProps & {
           {...props}
         />
       </>
-      // <input
-      //   type="number"
-      //   className={cn(
-      //     "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-foreground",
-      //     className
-      //   )}
-      //   ref={ref}
-      //   {...props}
-      //   onChange={(e) => props.onChange && props.onChange(Number(e.target.value))}
-      // />
     )
   }
 );
@@ -106,58 +91,28 @@ type CityInputProps = InputProps & {
 
 const CityInput = React.forwardRef<HTMLInputElement, CityInputProps>(
   ({ className, type, cities, ...props }, ref) => {
-    const [open, setOpen] = React.useState(false);
     const selectedCity = React.useMemo(() => {
       const _selectedCity = cities.find((c) => equalsIgnoreCase(c.value, props.value));
 
       return {
         label: _selectedCity?.label || "",
-        value: _selectedCity?.value || -1
+        value: String(_selectedCity?.value || -1)
       };
     }, [props.value])
 
     return (
       <>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className={cn('w-64 justify-between', className)}
-            >
-              <span>{selectedCity.value === -1 ? props.placeholder ?? 'Select a city...' : toFirstUpperCase(selectedCity.label)}</span>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput placeholder="Search city..." />
-              <CommandEmpty>No city found.</CommandEmpty>
-              <CommandGroup className="max-h-44 overflow-y-scroll">
-                {cities.map((city) => (
-                  <CommandItem
-                    key={city.value}
-                    value={city.label}
-                    onSelect={(currentValue) => {
-                      const _selectedCity = cities.find((c) => equalsIgnoreCase(c.label, currentValue));
-                      props.onChange(Number(_selectedCity?.value || -1));
-                      setOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        equalsIgnoreCase(selectedCity.value, city.value) ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {toFirstUpperCase(city.label)}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
+        <AutoComplete
+          options={cities}
+          emptyMessage="Select a city..."
+          placeholder="Select a city..."
+          onValueChange={(currentValue) => {
+            const _selectedCity = cities.find((c) => equalsIgnoreCase(c.label, currentValue.label));
+            props.onChange(Number(_selectedCity?.value || -1));
+          }}
+          value={selectedCity}
+          className={cn('h-8 py-0', className)}
+        />
         <input
           type="hidden"
           ref={ref}
@@ -169,4 +124,32 @@ const CityInput = React.forwardRef<HTMLInputElement, CityInputProps>(
 );
 CityInput.displayName = "CityInput";
 
-export { Input, NumberInput, ButtonNumberInput, CityInput }
+type DateInputProps = Omit<InputProps, 'onChange' | 'value'> & {
+  onChange: (value: string | undefined) => void;
+  value: string | undefined;
+}
+
+const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
+  ({ className, type, onChange, ...props }, ref) => {
+    return (
+      <>
+        <DatePicker
+          onChange={(date) => {
+            if (date === undefined) return;
+            onChange(date)
+          }}
+          value={props.value}
+          className={className}
+        />
+        <input
+          type="hidden"
+          ref={ref}
+          {...props}
+        />
+      </>
+    )
+  }
+);
+DateInput.displayName = "DateInput";
+
+export { Input, NumberInput, ButtonNumberInput, CityInput, DateInput }

@@ -22,6 +22,9 @@ const config = {
       },
     },
     extend: {
+      spacing: {
+        navbar: 'var(--navbar-height)',
+      },
       fontFamily: {
         heading: "var(--font-jockey-one)",
         body: "var(--font-poppins)",

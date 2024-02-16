@@ -1,18 +1,16 @@
-import { Ride } from "@/actions/db";
-import FindRidesForm from "@/components/find-rides-form";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Calendar, CheckCircle, Coins, Flag, Locate, Plus, Search, User, Wallet } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { CheckCircle, Coins, Wallet } from "lucide-react";
+import FindRidesForm from "@/components/find-rides-form";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/utils/style";
 
 export default function Home() {
   return (
-    <div className="fill-screen flex-n-center flex-col gap-6 justify-between px-6 py-12 pt-48 sm:pt-36 bg-background">
-      <div className="flex flex-col gap-8 max-w-md mx-auto">
-        <div className="relative p-4 bg-red-500 rounded-lg">
-          <div className="absolute top-0 left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-52 aspect-[1191/569]">
+    <>
+      <main className="relative min-w-full -translate-y-navbar min-h-[calc(100dvh-3rem-theme(spacing.3)*2-theme(spacing.6))] bg-[url(/assets/img/bg-1.jpg)] bg-center bg-cover px-3 pt-24 flex-n-center">
+        <div className="relative z-10 pt-16 backdrop-blur-sm rounded-lg">
+          <div className="absolute top-0 left-0 bg-background w-full h-full -z-10 rounded-lg"></div>
+          <div className="absolute top-0 left-1/2 transform -translate-y-2/3 -translate-x-1/2 w-full max-w-[100vw] max-h-52 aspect-[1191/569]">
             <Image
               src="/assets/img/car-illustration.png"
               alt=""
@@ -21,58 +19,35 @@ export default function Home() {
               quality={100}
             />
           </div>
+
+          <h1 className="text-center mb-4">Explore Rides</h1>
+
           <FindRidesForm />
-          {/* <div className="bg-white p-4 rounded-lg shadow-md mt-24">
-            <div className="flex items-center space-x-2">
-              <Locate className="text-gray-500 w-8" />
-              <Input placeholder="Leaving from..." />
-            </div>
-            <div className="flex items-center space-x-2 mt-4">
-              <Flag className="text-gray-500 w-8" />
-              <Input placeholder="Going to..." />
-            </div>
-            <div className="flex flex-row gap-2 w-full">
-              <div className="flex items-center space-x-2 w-full mt-4">
-                <Calendar className="text-gray-500 w-8" />
-                <Input type="date" placeholder="Date" />
-              </div>
-              <div className="flex items-center space-x-2 mt-4">
-                <User className="text-gray-500 w-8" />
-                <Input type='number' placeholder="1" className="max-w-[10ch]" />
-              </div>
-            </div>
-            <Button className="w-full mt-4 bg-red-500 text-white">Search for a ride...</Button>
-          </div> */}
         </div>
-        <div className="flex flex-col gap-4">
-          {/* <div className="flex items-center space-x-4">
-            <Wallet className="text-gray-800 w-8" />
-            <div>
-              <h3 className="text-lg font-semibold">Budget Travel</h3>
-              <p className="text-sm text-gray-600">
-                Wherever your destination, a shared ride will get you there affordably.
-              </p>
-            </div>
-          </div> */}
+
+        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent to-background"></div>
+      </main>
+      <section className="relative min-h-[100dvh] bg-background">
+        <div className="sm:absolute sm:top-0 sm:left-1/2 sm:-translate-x-1/2 translate-y-[calc(-1*(3rem+theme(spacing.3)*4))] grid grid-cols-1 sm:grid-cols-3 w-full max-w-sm mx-auto sm:max-w-screen-md px-4 py-4 sm:pt-0 gap-4">
           <FeatureCard
-            icon={<Wallet className="text-gray-800 w-10" />}
+            icon={<Wallet className="text-primary size-8" />}
             title="Budget Travel"
             description="Wherever your destination, a shared ride will get you there affordably."
           />
           <FeatureCard
-            icon={<CheckCircle className="text-gray-800 w-10" />}
+            icon={<CheckCircle className="text-primary size-8" />}
             title="Reliable & Easy"
             description="We verify reviews, profiles, and IDs for safe travel with user-friendly, secure technology"
           />
-          {/* Earn money card */}
           <FeatureCard
-            icon={<Coins className="text-gray-800 w-10" />}
+            icon={<Coins className="text-primary size-8" />}
             title="Earn Money"
             description="Share your ride and make money to cover your travel costs *and more*."
           />
         </div>
-      </div>
-    </div>
+
+      </section>
+    </>
   );
 }
 
@@ -80,12 +55,19 @@ interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
+  iconPosition?: "left" | "top";
+  className?: string;
 }
 
-function FeatureCard({ icon, title, description }: FeatureCardProps) {
+const iconPositionClassnames = {
+  left: "grid grid-cols-[3rem_auto]",
+  top: "grid grid-rows-[3rem_auto]",
+}
+
+function FeatureCard({ icon, title, description, iconPosition, className }: FeatureCardProps) {
   return (
-    <Card className="p-4 grid grid-cols-[3rem_auto] gap-x-2">
-      <div className="flex-n-center">
+    <Card className={cn("p-4 gap-3 border-primary", iconPositionClassnames[iconPosition ?? 'top'], className)}>
+      <div className={'flex-n-center'}>
         {icon}
       </div>
       <div>
