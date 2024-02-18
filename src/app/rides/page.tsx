@@ -31,7 +31,7 @@ export default async function FilteredRidesPage({
 		passengers: Number(passengers),
 	});
 
-	return <div className="flex flex-col gap-3 max-w-lg px-3 mx-auto">
+	return <div className="flex flex-col gap-3 max-w-lg px-3 mx-auto ">
 		<h1>Found Rides:</h1>
 		{rides.map(ride => <RideCard key={ride.id} {...ride} />)}
 	</div>
