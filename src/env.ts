@@ -5,6 +5,7 @@ export const env = createEnv({
 	server: {
 		GOOGLE_CLIENT_ID: z.string().min(1),
 		GOOGLE_CLIENT_SECRET: z.string().min(1),
+		SUPABASE_BUCKETS_PROFILE_PICTURES: z.string().min(1),
 	},
 
 	/**

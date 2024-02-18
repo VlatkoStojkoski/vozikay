@@ -121,3 +121,19 @@ export async function findRidesAroundDate(supabase: SupabaseClient<Database>, { 
 
 	return sortedRides;
 }
+
+export async function getProfile(supabase: SupabaseClient<Database>) {
+	const { data: { user: user } } = await supabase.auth.getUser();
+
+	if (!user) {
+		redirect('/login');
+	}
+
+	const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+
+	if (!profile) {
+		return null;
+	}
+
+	return profile;
+}

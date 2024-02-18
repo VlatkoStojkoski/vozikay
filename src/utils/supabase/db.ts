@@ -89,6 +89,42 @@ export type Database = {
           }
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          picture: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          picture?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          picture?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_profiles_picture_fkey"
+            columns: ["picture"]
+            isOneToOne: true
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       rides: {
         Row: {
           capacity: number | null

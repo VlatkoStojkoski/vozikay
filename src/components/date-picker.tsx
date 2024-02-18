@@ -21,13 +21,15 @@ export type DatePickerProps = Omit<ButtonProps, 'value' | 'onChange'> & {
 export default function DatePicker({
 	value, onChange, className, ...props
 }: DatePickerProps) {
+	const [isOpen, setIsOpen] = React.useState(false);
+
 	const dateValue = React.useMemo(() => {
 		if (value === undefined) return undefined;
 		return new Date(value);
 	}, [value]);
 
 	return (
-		<Popover>
+		<Popover open={isOpen}>
 			<PopoverTrigger asChild>
 				<Button
 					variant={"ghost"}
@@ -36,6 +38,7 @@ export default function DatePicker({
 						!dateValue && "text-muted-foreground",
 						className
 					)}
+					onClick={() => setIsOpen((prev) => !prev)}
 					{...props}
 				>
 					{dateValue ? format(dateValue, "P", { locale: mk }) : <span>Pick a date</span>}
@@ -45,7 +48,10 @@ export default function DatePicker({
 				<Calendar
 					mode="single"
 					selected={dateValue || undefined}
-					onSelect={(date) => void onChange(date?.toISOString())}
+					onSelect={(date) => {
+						void onChange(date?.toISOString());
+						setIsOpen(false);
+					}}
 					initialFocus
 				/>
 			</PopoverContent>
