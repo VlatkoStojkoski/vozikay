@@ -1,16 +1,22 @@
 'use client';
 
-import { LogOut, Route, User, Wallet } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
 import Link from "next/link";
+import { LogOut, Route, User, Wallet } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 
-export default function UserActionsMenu() {
+type UserActionsMenuProps = {
+	avatar?: JSX.Element | null;
+};
+
+export default function UserActionsMenu({ avatar, ...props }: UserActionsMenuProps) {
 	return <DropdownMenu>
 		<DropdownMenuTrigger asChild>
-			<Button className="w-12 h-12 p-2 rounded-full" variant="outline">
-				<User />
+			<Button className="relative w-12 h-12 p-0 rounded-full" variant="outline">
+				{
+					avatar ? avatar : <User />
+				}
 			</Button>
 		</DropdownMenuTrigger>
 		<DropdownMenuContent className="min-w-36" align="end" alignOffset={-20}>
@@ -37,7 +43,7 @@ export default function UserActionsMenu() {
 					const supabase = createClient();
 					supabase.auth.signOut();
 				}}>
-					<Wallet className="w-4 h-4 mr-2" /> Sign Out
+					<LogOut className="w-4 h-4 mr-2" /> Sign Out
 				</div>
 			</DropdownMenuItem>
 		</DropdownMenuContent>

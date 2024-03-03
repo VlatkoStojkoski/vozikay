@@ -27,7 +27,7 @@ export default function Home() {
 
         <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-b from-transparent to-background"></div>
       </main>
-      <section className="relative min-h-[100dvh] bg-background">
+      <section className="relative bg-background">
         <div className="sm:absolute sm:top-0 sm:left-1/2 sm:-translate-x-1/2 translate-y-[calc(-1*(3rem+theme(spacing.3)*4))] grid grid-cols-1 sm:grid-cols-3 w-full max-w-sm mx-auto sm:max-w-screen-md px-4 py-4 sm:pt-0 gap-4">
           <FeatureCard
             icon={<Wallet className="text-primary size-8" />}

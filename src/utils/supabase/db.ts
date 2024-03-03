@@ -91,22 +91,22 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar: string
           created_at: string
           id: string
           name: string
-          picture: string | null
         }
         Insert: {
+          avatar: string
           created_at?: string
           id?: string
           name: string
-          picture?: string | null
         }
         Update: {
+          avatar?: string
           created_at?: string
           id?: string
           name?: string
-          picture?: string | null
         }
         Relationships: [
           {
@@ -114,13 +114,6 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_profiles_picture_fkey"
-            columns: ["picture"]
-            isOneToOne: true
-            referencedRelation: "objects"
             referencedColumns: ["id"]
           }
         ]

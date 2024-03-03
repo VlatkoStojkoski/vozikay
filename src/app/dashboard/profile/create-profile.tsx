@@ -1,20 +1,32 @@
 'use client';
 
+import { AlertCircle, Ban, CheckCircle, Cross, Loader, Loader2Icon, LoaderIcon, Upload, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+
 import { createProfile } from "@/actions/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/utils/supabase/client";
-import { Upload } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/utils/style";
+
+function CreateProfileSubmit() {
+	const formStatus = useFormStatus();
+
+	return <Button type="submit" className="mt-4" disabled={formStatus.pending}>
+		<Loader2Icon className="size-6 mr-2 animate-spin" />
+		Create
+	</Button>
+}
 
 export default function CreateProfile() {
-	const supabase = createClient();
+	const { toast } = useToast();
+
+	const [createProfileState, createProfileAction] = useFormState(createProfile, null);
 
 	const [profilePictureSrc, setProfilePictureSrc] = useState<string | null>(null);
 
-	// Handle file upload event
 	const uploadFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.files) {
 			return;
@@ -22,28 +34,39 @@ export default function CreateProfile() {
 
 		const file = event.target.files[0];
 
-		// Set file to state
 		const blobUrl = URL.createObjectURL(file);
 		setProfilePictureSrc(blobUrl);
-
-		// const bucket = "profilePictures"
-
-		// // Call Storage API to upload file
-		// const { data, error } = await supabase.storage
-		// 	.from(bucket)
-		// 	.upload(file.name, file);
-
-		// // Handle error if upload failed
-		// if (error) {
-		// 	alert('Error uploading file.');
-		// 	return;
-		// }
-
-		// alert('File uploaded successfully!');
 	};
 
+	useEffect(() => {
+		if (createProfileState?.success !== undefined) {
+			if (createProfileState.success) {
+				toast({
+					title: <div className="flex flex-row items-center">
+						<CheckCircle className="size-6 mr-2" />
+						Profile created
+					</div>,
+					description: 'Your profile has been created successfully',
+					className: cn('flex fixed !bottom-0 !right-0 sm:!bottom-4 sm:!right-4 max-w-sm p-4'),
+				})
+			} else {
+				console.log(createProfileState.message);
+				toast({
+					title: <div className="flex flex-row items-center">
+						<AlertCircle className="size-6 mr-2" />
+						Profile not created
+					</div>,
+					description: createProfileState.message,
+					variant: 'destructive',
+					className: cn('flex fixed !bottom-0 !right-0 sm:!bottom-4 sm:!right-4 max-w-sm p-4')
+				})
+			}
+
+		}
+	}, [createProfileState]);
+
 	return (
-		<form className="flex-n-center flex-col" action={createProfile}>
+		<form className="flex-n-center flex-col" action={createProfileAction}>
 			<h1 className="text-center mb-4">Create Profile</h1>
 			<Label htmlFor="name" className="mb-2">Profile picture</Label>
 			<Button asChild>
@@ -69,7 +92,7 @@ export default function CreateProfile() {
 				<Label htmlFor="name">Name</Label>
 				<Input id="name" name="name" type="text" placeholder="John Doe" />
 			</div>
-			<Button type="submit" className="mt-4">Create</Button>
+			<CreateProfileSubmit />
 		</form>
 	);
 }
