@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`min-w-full min-h-[100dvh] ${jockeyOne.variable} ${poppins.variable} font-body`}>
+      <body className={`min-w-full min-h-[100dvh] pt-20 ${jockeyOne.variable} ${poppins.variable} font-body`}>
         <Navbar />
         {children}
         <Toaster />
